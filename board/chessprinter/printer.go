@@ -7,6 +7,18 @@ import (
 	"strings"
 )
 
+func ClearScreen() {
+	fmt.Print("\033[H\033[2J")
+}
+
+func PrintMoveData(data board.MoveData) {
+	originLetter := 'A' + data.Origin%8
+	originNumber := 8 - data.Origin/8
+	destinyLetter := 'A' + data.Destiny%8
+	destinyNumber := 8 - data.Destiny/8
+	fmt.Printf("Move:\nPiece:%s\nWhite:%t\nFrom:%c%d\nTo: %c%d\n\n", data.Piece, data.IsWhite, originLetter, originNumber, destinyLetter, destinyNumber)
+}
+
 func PrintBoard(board board.Board) {
 	boardString := "\n     A   B   C   D   E   F   G   H"
 	for i, piece := range board {
@@ -50,7 +62,7 @@ func PrintBoard(board board.Board) {
 
 		boardString += fmt.Sprintf(" %s |", pieceStr)
 	}
-	boardString += "\n   ---------------------------------\n"
+	boardString += " 1\n   ---------------------------------\n"
 	boardString += "     A   B   C   D   E   F   G   H"
 	fmt.Println(boardString)
 }

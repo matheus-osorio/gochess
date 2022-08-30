@@ -23,43 +23,37 @@ func createPiece(piece rune, position int) board.Movable {
 	case 'r':
 		return pieces.Rook{
 			Piece: pieces.Piece{
-				IsWhite:    isWhite,
-				Coordinate: position,
+				IsWhite: isWhite,
 			},
 		}
 	case 'n':
 		return pieces.Knight{
 			Piece: pieces.Piece{
-				IsWhite:    isWhite,
-				Coordinate: position,
+				IsWhite: isWhite,
 			},
 		}
 	case 'b':
 		return pieces.Bishop{
 			Piece: pieces.Piece{
-				IsWhite:    isWhite,
-				Coordinate: position,
+				IsWhite: isWhite,
 			},
 		}
 	case 'k':
 		return pieces.King{
 			Piece: pieces.Piece{
-				IsWhite:    isWhite,
-				Coordinate: position,
+				IsWhite: isWhite,
 			},
 		}
 	case 'q':
 		return pieces.Queen{
 			Piece: pieces.Piece{
-				IsWhite:    isWhite,
-				Coordinate: position,
+				IsWhite: isWhite,
 			},
 		}
 	case 'p':
 		return pieces.Pawn{
 			Piece: pieces.Piece{
-				IsWhite:    isWhite,
-				Coordinate: position,
+				IsWhite: isWhite,
 			},
 		}
 	default:
@@ -111,19 +105,22 @@ func createConfigs(turn string, castling string) board.Configuration {
 
 // Create a Board and a config object from a FEN String. The function takes only the first 3 parameters (board position, turn and castling rights)
 // You can read about FEN Strings here: https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-func CreateBoard(fen FenStr) (*board.Board, *board.Configuration, error) {
+func CreateBoard(fen FenStr) (*board.BoardState, error) {
 	if !fen.Validate() {
-		return nil, nil, errors.New("there was something wrong with the FEN String")
+		return nil, errors.New("there was something wrong with the FEN String")
 	}
 
 	boardFEN, turnFEN, castlingFEN := fen.Separate()
 
 	chessboard, err := createPositions(boardFEN)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	configuration := createConfigs(turnFEN, castlingFEN)
-
-	return &chessboard, &configuration, nil
+	state := board.BoardState{
+		Board:         chessboard,
+		Configuration: configuration,
+	}
+	return &state, nil
 }

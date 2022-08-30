@@ -9,10 +9,12 @@ import (
 )
 
 func Test_CreateBoard(t *testing.T) {
-	chessboard, configs, err := fen.CreateBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBKQBNR w KQkq")
+	state, err := fen.CreateBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBKQBNR w KQkq")
 	if err != nil {
 		t.Error(err)
 	}
+
+	chessboard, configs := state.Board, state.Configuration
 
 	expectedOrder := board.Board{
 		pieces.Rook{},
@@ -33,8 +35,8 @@ func Test_CreateBoard(t *testing.T) {
 		pieces.Pawn{},
 	}
 
-	whitePart := (*chessboard)[:16]
-	blackPart := (*chessboard)[48:]
+	whitePart := (chessboard)[:16]
+	blackPart := (chessboard)[48:]
 
 	for i := 0; i < 16; i++ {
 		whiteReflection := reflect.TypeOf(whitePart[i])
@@ -55,5 +57,19 @@ func Test_CreateBoard(t *testing.T) {
 
 	if !(configs.CastleRights.White.King && configs.CastleRights.White.Queen) {
 		t.Errorf("Castle Rights not being correctly inserted for Whites")
+	}
+}
+
+func Test_CreateFEN(t *testing.T) {
+	t.Parallel()
+	original := "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"
+	state, err := fen.CreateBoard(fen.FenStr(original))
+	if err != nil {
+		t.Error(err)
+	}
+
+	newFen := fen.CreateFEN(*state)
+	if original != newFen {
+		t.Errorf("The original FEN is different from the new one. Original: %s, New: %s", original, newFen)
 	}
 }

@@ -19,8 +19,7 @@ const MUSTCAPTURE = 100
 const MUSTNOTCAPTURE = 200
 
 type Piece struct {
-	IsWhite    bool
-	Coordinate int
+	IsWhite bool
 }
 
 func (p Piece) IsWhitePiece() bool {
@@ -28,13 +27,13 @@ func (p Piece) IsWhitePiece() bool {
 }
 
 func (p Piece) checkMoves(chessboard board.Board, increment int, coordinate int, color int, moveRange int, moveRule int) (coordinates []int) {
-	for i := 1; i < moveRange; i++ {
+	for i := 1; i <= moveRange; i++ {
 		current := coordinate + i*increment
 		squareStatus := chessboard.GetCoordinateInfo(current)
 		if squareStatus == board.FREESPOT && moveRule != MUSTCAPTURE {
 			coordinates = append(coordinates, current)
 			continue
-		} else if squareStatus != color && moveRule != MUSTNOTCAPTURE {
+		} else if squareStatus != board.FREESPOT && squareStatus != color && moveRule != MUSTNOTCAPTURE {
 			coordinates = append(coordinates, current)
 			break
 		}
@@ -44,8 +43,7 @@ func (p Piece) checkMoves(chessboard board.Board, increment int, coordinate int,
 	return
 }
 
-func (p Piece) leftMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) leftMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 
@@ -53,8 +51,7 @@ func (p Piece) leftMoves(board board.Board, pieceRange int, moveRules int) []int
 	return p.checkMoves(board, LEFTMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) rightMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) rightMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 
@@ -62,8 +59,7 @@ func (p Piece) rightMoves(board board.Board, pieceRange int, moveRules int) []in
 	return p.checkMoves(board, RIGHTMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) upMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) upMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 
@@ -71,8 +67,7 @@ func (p Piece) upMoves(board board.Board, pieceRange int, moveRules int) []int {
 	return p.checkMoves(board, UPMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) downMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) downMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 
@@ -80,8 +75,7 @@ func (p Piece) downMoves(board board.Board, pieceRange int, moveRules int) []int
 	return p.checkMoves(board, DOWNMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) upLeftMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) upLeftMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 	minimalDiagonalMove := math.Min(float64(boardRange.Up), float64(boardRange.Left))
@@ -89,8 +83,7 @@ func (p Piece) upLeftMoves(board board.Board, pieceRange int, moveRules int) []i
 	return p.checkMoves(board, UPLEFTMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) upRightMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) upRightMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 	minimalDiagonalMove := math.Min(float64(boardRange.Up), float64(boardRange.Right))
@@ -98,8 +91,7 @@ func (p Piece) upRightMoves(board board.Board, pieceRange int, moveRules int) []
 	return p.checkMoves(board, UPRIGHTMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) downLeftMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) downLeftMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 	minimalDiagonalMove := math.Min(float64(boardRange.Down), float64(boardRange.Left))
@@ -107,8 +99,7 @@ func (p Piece) downLeftMoves(board board.Board, pieceRange int, moveRules int) [
 	return p.checkMoves(board, DOWNLEFTMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) downRightMoves(board board.Board, pieceRange int, moveRules int) []int {
-	coordinate := p.Coordinate
+func (p Piece) downRightMoves(board board.Board, pieceRange int, moveRules int, coordinate int) []int {
 	pieceColor := board.GetCoordinateInfo(coordinate)
 	boardRange := board.GetPlaceInBoard(coordinate)
 	minimalDiagonalMove := math.Min(float64(boardRange.Down), float64(boardRange.Right))
@@ -116,18 +107,11 @@ func (p Piece) downRightMoves(board board.Board, pieceRange int, moveRules int) 
 	return p.checkMoves(board, DOWNRIGHTMOVE, coordinate, pieceColor, moveRange, moveRules)
 }
 
-func (p Piece) CreateBoardStates(coordinates []int, chessboard board.Board, configs board.Configuration) (states []board.BoardState) {
-	origin := p.Coordinate
+func (p Piece) CreateBoardStates(coordinates []int, chessboard board.Board, configs board.Configuration, name string, origin int) (states []board.BoardState) {
 	for _, coordinate := range coordinates {
-		newBoard := board.Board{}
-		copy(newBoard, chessboard)
 
-		newBoard[origin], newBoard[coordinate] = nil, newBoard[origin]
-		state := board.BoardState{
-			Board:         newBoard,
-			Configuration: configs.ChangeTurn(),
-		}
-
+		state := board.BoardState{}
+		state.CreateBoardState(origin, coordinate, chessboard, configs, name, p.IsWhite)
 		states = append(states, state)
 	}
 

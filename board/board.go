@@ -6,13 +6,14 @@ const BLACKPIECE = 2
 
 // defines everything that moves in the game
 type Movable interface {
-	MovesAvailable(Board, Configuration) []BoardState
+	MovesAvailable(Board, Configuration, int) []BoardState
 	IsWhitePiece() bool
 }
 
 // The board. Has methods for board management
 type Board []Movable
 
+// This struct removes all the drawbacks from having a 1 dimensional array as the board
 type BoardPlace struct {
 	Up    int
 	Down  int
@@ -44,6 +45,7 @@ func (b Board) GetCoordinateInfo(coordinate int) int {
 	return BLACKPIECE
 }
 
+// This function changes the board after a King side Castle
 func (b Board) CastleKingSide(coordinate int) Board {
 	var board Board
 	copy(board, b)
@@ -51,6 +53,7 @@ func (b Board) CastleKingSide(coordinate int) Board {
 	return board
 }
 
+// This function changes the board after a Queen side Castle
 func (b Board) CastleQueenSide(coordinate int) Board {
 	var board Board
 	copy(board, b)
