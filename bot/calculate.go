@@ -20,7 +20,7 @@ func (move *MoveTree) calculateMinimum() {
 	currentPoints := 100000.00
 	for _, move := range move.next {
 		move.calculateMaximum()
-		if move.points > currentPoints {
+		if move.points < currentPoints {
 			currentPoints = move.points
 		}
 	}
@@ -37,7 +37,7 @@ func (move *MoveTree) calculateMaximum() {
 	currentPoints := -100000.00
 	for _, move := range move.next {
 		move.calculateMinimum()
-		if move.points < currentPoints {
+		if move.points > currentPoints {
 			currentPoints = move.points
 		}
 	}

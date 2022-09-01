@@ -1,6 +1,7 @@
 package pieces
 
 import (
+	"fmt"
 	"gochess/board"
 )
 
@@ -34,6 +35,9 @@ func (k King) castleKingSide(chessboard board.Board, configs board.Configuration
 }
 
 func (k King) castleQueenSide(chessboard board.Board, configs board.Configuration, coordinate int) board.BoardState {
+	if coordinate == 3 {
+		fmt.Println(configs)
+	}
 	return board.BoardState{
 		Board:         chessboard.CastleQueenSide(coordinate),
 		Configuration: configs.ChangeTurn(),

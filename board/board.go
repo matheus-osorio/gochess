@@ -21,6 +21,13 @@ type BoardPlace struct {
 	Right int
 }
 
+// Creates a new instance of the board so that it can be modified independently
+func (b Board) Copy() Board {
+	board := make(Board, 64)
+	copy(board, b)
+	return board
+}
+
 // The function recieves a coordinate and returns how many squares there are on all imaediate positions
 func (b Board) GetPlaceInBoard(coordinate int) BoardPlace {
 	place := BoardPlace{}
@@ -55,8 +62,7 @@ func (b Board) CastleKingSide(coordinate int) Board {
 
 // This function changes the board after a Queen side Castle
 func (b Board) CastleQueenSide(coordinate int) Board {
-	var board Board
-	copy(board, b)
+	board := b.Copy()
 	board[coordinate], board[coordinate-1], board[coordinate-2], board[coordinate-4] = nil, board[coordinate-4], board[coordinate], nil
 	return board
 }

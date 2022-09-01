@@ -40,7 +40,7 @@ func PrintBoard(board board.Board) {
 				pieceStr = "r"
 
 			case "Knight":
-				pieceStr = "k"
+				pieceStr = "n"
 
 			case "Bishop":
 				pieceStr = "b"
